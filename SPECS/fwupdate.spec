@@ -1,6 +1,7 @@
 %global efivar_version 35-1
 %global efibootmgr_version 16-1
 %global gnu_efi_version 3.0.8-1
+%global pesign_name centossecureboot001
 %undefine _debuginfo_subpackages
 
 Name:           fwupdate
@@ -23,8 +24,8 @@ BuildRequires: libsmbios-devel
 ExclusiveArch:  x86_64 aarch64
 Source0:        https://github.com/rhinstaller/fwupdate/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
 Source1:        find-debuginfo-efi.sh
-Source2:        securebootca.cer
-Source3:        secureboot.cer
+Source2:        centos-ca-secureboot.der
+Source3:        centossecureboot001.crt
 
 Patch0001: Fix-dependency-chain-for-a-parallel-make-issue.patch
 
@@ -105,7 +106,7 @@ make TOPDIR=.. -f ../Makefile OPT_FLAGS="$RPM_OPT_FLAGS" \
      libdir=%{_libdir} bindir=%{_bindir} \
      EFIDIR=%{efidir} %{?_smp_mflags}
 mv -v efi/fwup%{efiarch}.efi efi/fwup%{efiarch}.unsigned.efi
-%pesign -s -i efi/fwup%{efiarch}.unsigned.efi -o efi/fwup%{efiarch}.efi -a %{SOURCE2} -n redhatsecureboot301 -c %{SOURCE3}
+%pesign -s -i efi/fwup%{efiarch}.unsigned.efi -o efi/fwup%{efiarch}.efi -a %{SOURCE2} -n %{pesign_name} -c %{SOURCE3}
 cd ..
 
 %ifarch x86_64
@@ -115,7 +116,7 @@ setarch linux32 -B make TOPDIR=.. -f ../Makefile ARCH=%{efialtarch} \
                         libdir=%{_libdir} bindir=%{_bindir} \
                         EFIDIR=%{efidir} %{?_smp_mflags}
 mv -v efi/fwup%{efialtarch}.efi efi/fwup%{efialtarch}.unsigned.efi
-%pesign -s -i efi/fwup%{efialtarch}.unsigned.efi -o efi/fwup%{efialtarch}.efi -a %{SOURCE2} -n redhatsecureboot301 -c %{SOURCE3}
+%pesign -s -i efi/fwup%{efialtarch}.unsigned.efi -o efi/fwup%{efialtarch}.efi -a %{SOURCE2} -n %{pesign_name} -c %{SOURCE3}
 cd ..
 %endif
 
@@ -201,6 +202,9 @@ make abicheck
 %defattr(-,root,root)
 
 %changelog
+* Tue May 28 2019 Fabian Arrotin <arrfab@centos.org> 11-3
+- Rolled in CentOS Secureboot certs
+
 * Thu Feb 21 2019 Javier Martinez Canillas <javierm@redhat.com> 11-3
 - Fix dependency chain issue when doing a parallel make
   Related: rhbz#1677579
