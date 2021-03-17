@@ -1,0 +1,25 @@
+From 62ade44efbc0e92feafae09d83e9617fbb35d9c7 Mon Sep 17 00:00:00 2001
+From: "Michael L. Young" <elgueromexicano@gmail.com>
+Date: Tue, 16 Mar 2021 19:31:09 -0500
+Subject: [PATCH] Fix signedness compile error
+
+---
+ linux/libfwup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/linux/libfwup.c b/linux/libfwup.c
+index 7f56c48..59b9b93 100644
+--- a/linux/libfwup.c
++++ b/linux/libfwup.c
+@@ -2098,7 +2098,7 @@ fwup_print_update_info(void)
+ 			break;
+ 		}
+ 
+-		if (efidp_format_device_path(path, dp_sz,
++		if (efidp_format_device_path((unsigned char *)path, dp_sz,
+ 					     (const_efidp)info->dp_ptr, 4096)
+ 					     != dp_sz) {
+ 			errno = EINVAL;
+-- 
+2.29.2
+

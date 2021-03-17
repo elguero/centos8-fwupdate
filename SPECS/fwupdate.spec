@@ -28,6 +28,7 @@ Source2:        centos-ca-secureboot.der
 Source3:        centossecureboot001.crt
 
 Patch0001: Fix-dependency-chain-for-a-parallel-make-issue.patch
+Patch0002: 0002-Fix-signedness-compile-error.patch
 
 %global __os_install_post %{expand:\
   %{?__debug_package:%{__debug_install_post}} \
